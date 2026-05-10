@@ -3,989 +3,758 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aegis Interface</title>
+    <title>ChatGPT - Aegis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
-
-        body { 
-            background-color: #000000; 
-            color: #ececec; 
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        
+        body {
+            background-color: #000000;
+            color: #ececec;
         }
-
-        .sidebar { 
-            background-color: #000000; 
-            width: 260px; 
-            height: 100vh; 
-            border-right: 1px solid #202020; 
+        
+        .sidebar {
+            background-color: #000000;
+            width: 260px;
+            height: 100vh;
+            border-right: 1px solid rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
-            padding: 12px;
+            padding: 16px;
+            gap: 8px;
         }
-
-        .sidebar-header {
+        
+        .sidebar.temporary {
+            background-color: #171717;
+        }
+        
+        .sidebar-item {
+            width: 100%;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding: 0 8px;
-        }
-
-        .icon-btn {
-            padding: 8px;
-            background: transparent;
-            border: none;
-            color: #ececec;
-            cursor: pointer;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 20px;
-        }
-
-        .icon-btn:hover {
-            background-color: #202020;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #a5a5a5;
             transition: all 0.2s;
+            cursor: pointer;
+            color: white;
         }
-
-        .nav-item:hover {
-            background-color: #202020;
-            color: #ececec;
+        
+        .sidebar-item:hover {
+            background-color: #1a1a1a;
         }
-
-        .nav-item.active {
-            background-color: #202020;
-            color: #ececec;
-            font-weight: 500;
+        
+        .sidebar-item.active {
+            background-color: #212121;
         }
-
-        .nav-icon {
+        
+        .sidebar-item-icon {
             width: 20px;
             height: 20px;
-            flex-shrink: 0;
-        }
-
-        .recents-title {
-            padding: 24px 8px 8px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #6b6b6b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .sidebar-footer {
-            border-top: 1px solid #202020;
-            padding-top: 8px;
-            margin-top: auto;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px;
-        }
-
-        .user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #db2777, #9333ea);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            font-weight: 700;
         }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .user-status {
-            font-size: 12px;
-            color: #6b6b6b;
-        }
-
-        .manage-btn {
-            width: 100%;
-            margin-top: 8px;
-            padding: 8px 12px;
-            background-color: #2f2f2f;
-            border: none;
-            border-radius: 12px;
-            color: #ececec;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .manage-btn:hover {
-            background-color: #3f3f3f;
-        }
-
+        
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            position: relative;
+            background-color: #000000;
         }
-
-        .top-bar {
-            padding: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        .main-content.temporary {
+            background-color: #171717;
         }
-
-        .model-selector {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-
-        .model-selector:hover {
-            background-color: #202020;
-        }
-
-        .model-name {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .top-bar-icons {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            color: #6b6b6b;
-        }
-
-        .top-icon {
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .top-icon:hover {
-            color: #ececec;
-        }
-
-        .refresh-btn {
-            width: 32px;
-            height: 32px;
-            border: 1px solid #4b4b4b;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .refresh-btn:hover {
-            background-color: #202020;
-        }
-
-        .chat-area {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .welcome-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 16px;
-        }
-
-        .aegis-logo {
-            width: 96px;
-            height: 96px;
-            background: linear-gradient(135deg, #9333ea, #06b6d4);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 32px;
-            box-shadow: 0 0 40px rgba(147, 51, 234, 0.3);
-            animation: pulseGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); }
-        }
-
-        .logo-shield {
-            font-size: 48px;
-        }
-
-        .welcome-title {
-            font-size: 24px;
-            font-weight: 500;
-            margin-bottom: 0;
-        }
-
-        .messages-container {
-            max-width: 896px;
-            margin: 0 auto;
-            padding: 24px 16px;
-        }
-
-        .message {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message.user {
-            justify-content: flex-end;
-        }
-
-        .message-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #9333ea, #06b6d4);
-        }
-
-        .message.user .message-avatar {
-            display: none;
-        }
-
-        .message-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .message.user .message-content {
-            flex: none;
-            max-width: 80%;
-        }
-
-        .message-role {
-            font-size: 12px;
-            color: #6b6b6b;
-            margin-bottom: 4px;
-            font-weight: 600;
-        }
-
-        .message-bubble {
-            background-color: #202020;
-            border-radius: 16px;
-            border-top-right-radius: 4px;
-            padding: 12px 16px;
-            font-size: 14px;
-        }
-
-        .message.user .message-bubble {
-            border-radius: 16px;
-            border-top-right-radius: 4px;
-        }
-
-        .terminal-output {
-            background-color: #0a0a0a;
-            border: 1px solid #303030;
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            margin-top: 12px;
-            max-height: 400px;
-            overflow-y: auto;
-            color: #a5a5a5;
-        }
-
-        .input-area {
-            padding: 16px;
-        }
-
-        .mode-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px;
-            background-color: #202020;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            max-width: 896px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .mode-btn {
-            flex: 1;
-            padding: 8px 16px;
-            background: transparent;
-            border: none;
-            border-radius: 6px;
-            color: #888;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .mode-btn:hover {
-            color: #ececec;
-        }
-
-        .mode-btn.active {
-            background-color: #303030;
-            color: #ececec;
-        }
-
+        
         .input-box {
-            background-color: #212121;
-            border-radius: 28px;
-            display: flex;
-            align-items: flex-end;
-            padding: 8px 16px;
-            max-width: 896px;
-            margin: 0 auto;
-            border: 1px solid #303030;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .input-action-btn {
-            padding: 8px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 20px;
-            transition: all 0.2s;
-        }
-
-        .input-action-btn:hover {
-            color: #ececec;
-        }
-
-        #messageInput {
-            flex: 1;
-            padding: 12px 8px;
-            background: transparent;
-            border: none;
-            color: #ececec;
-            font-size: 18px;
-            outline: none;
-            resize: none;
-            max-height: 200px;
-            min-height: 24px;
-            font-family: inherit;
-        }
-
-        #messageInput::placeholder {
-            color: #8e8e8e;
-        }
-
-        .send-btn {
-            width: 40px;
-            height: 40px;
-            background-color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: black;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            transition: all 0.2s;
-        }
-
-        .send-btn:hover {
-            background-color: #e0e0e0;
-            transform: scale(1.05);
-        }
-
-        .send-btn:disabled {
-            background-color: #3a3a3a;
-            color: #666;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .disclaimer {
-            text-align: center;
-            font-size: 12px;
-            color: #6b6b6b;
-            margin-top: 12px;
-        }
-
-        .sparkle {
-            position: absolute;
-            bottom: 96px;
-            right: 24px;
-            opacity: 0.4;
-            animation: sparkle 3s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
-        }
-
-        .status-indicator {
-            position: fixed;
-            bottom: 80px;
-            right: 24px;
             background-color: #1a1a1a;
-            border: 1px solid #303030;
-            border-radius: 12px;
-            padding: 12px 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 28px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        .input-box input::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+        
+        .quick-action-btn {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #22c55e;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding-top: 8px;
-        }
-
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background-color: #6b6b6b;
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out both;
-        }
-
-        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
-        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0); }
-            40% { transform: scale(1); }
-        }
-
-        .recent-chat-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 8px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border: 1px solid #333333;
+            border-radius: 9999px;
+            font-size: 13.5px;
+            color: #ececec;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 14px;
-            color: #a5a5a5;
             transition: all 0.2s;
         }
-
-        .recent-chat-item:hover {
-            background-color: #202020;
-            color: #ececec;
+        
+        .quick-action-btn:hover {
+            background-color: #1a1a1a;
         }
-
-        .recent-chat-item.active {
-            background-color: #202020;
-            color: #ececec;
-        }
-
-        .recent-preview {
-            flex: 1;
+        
+        .recent-chat {
+            width: 100%;
+            text-align: left;
+            padding: 8px 12px;
+            font-size: 13.5px;
+            color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
-        .delete-btn {
-            padding: 4px;
-            background: transparent;
-            border: none;
-            color: #888;
-            cursor: pointer;
-            border-radius: 4px;
-            opacity: 0;
-            transition: all 0.2s;
+        
+        .recent-chat:hover {
+            background-color: #1a1a1a;
         }
-
-        .recent-chat-item:hover .delete-btn {
-            opacity: 1;
-        }
-
-        .delete-btn:hover {
-            background-color: #303030;
-        }
-
-        .cloudflare-note {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border: 1px solid #303030;
-            border-radius: 12px;
-            padding: 24px;
-            max-width: 500px;
-            text-align: center;
-            margin-top: 24px;
-        }
-
-        .cloudflare-note h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #9333ea, #06b6d4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .cloudflare-note p {
-            font-size: 14px;
-            color: #a5a5a5;
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .cloudflare-btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #9333ea, #06b6d4);
-            border: none;
-            border-radius: 8px;
+        
+        .claim-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 12px;
+            background-color: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
             color: white;
-            font-size: 14px;
-            font-weight: 600;
-            text-decoration: none;
             cursor: pointer;
             transition: all 0.2s;
-            margin: 4px;
         }
-
-        .cloudflare-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.3);
+        
+        .claim-btn:hover {
+            background-color: #2a2a2a;
+        }
+        
+        .model-dropdown {
+            background-color: #2f2f2f;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .model-option {
+            width: 100%;
+            text-align: left;
+            padding: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .model-option:hover {
+            background-color: #3f3f3f;
+        }
+        
+        .model-option.active {
+            background-color: rgba(255,255,255,0.05);
+        }
+        
+        .add-menu {
+            background-color: #2f2f2f;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .add-menu-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+            font-size: 15px;
+        }
+        
+        .add-menu-item:hover {
+            background-color: #3f3f3f;
+        }
+        
+        .free-offer-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            background: linear-gradient(to right, #1c1c1c, #2d2d4d);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 0 20px rgba(45,45,77,0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .free-offer-pill:hover {
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .temp-chat-modal {
+            background-color: #2f2f2f;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
-<body>
-    <div style="display: flex; height: 100vh;">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <button class="icon-btn" id="toggleSidebar">◀</button>
-                <button class="icon-btn" onclick="newChat()">✏</button>
+<body class="flex h-screen w-full">
+    <aside id="sidebar" class="sidebar">
+        <div class="flex items-center justify-between px-3 py-2 mb-4">
+            <div class="w-6 h-6 text-white">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5153-4.9066 6.0462 6.0462 0 0 0-3.947-3.1298 6.0917 6.0917 0 0 0-5.281 1.0651 6.0917 6.0917 0 0 0-4.3015-1.7825 6.0463 6.0463 0 0 0-5.32 3.321 6.0917 6.0917 0 0 0-.5153 5.4851 6.0463 6.0463 0 0 0-1.2587 5.617 6.0917 6.0917 0 0 0 3.947 3.1298 6.0917 6.0917 0 0 0 5.281-1.0651 6.0917 6.0917 0 0 0 4.3015 1.7825 6.0463 6.0463 0 0 0 5.32-3.321 6.0917 6.0917 0 0 0 .5153-5.4851 6.0463 6.0463 0 0 0 1.2587-5.617zm-10.2819 8.7885a3.944 3.944 0 0 1-1.9213-.5013L12 16.9205l1.6427-.9234 3.4473 1.9413a3.9483 3.9483 0 0 1-4.8081.7512zm-4.7081-3.6121l-3.4143-1.9221a3.9483 3.9483 0 0 1-1.3963-5.0772 3.9487 3.9487 0 0 1 4.5422-1.765l.0001 3.2505 1.6427 .9234-1.3744-2.4096zm1.1444-6.474l1.3744 2.4048-1.6427-.9234-.0001-3.2505a3.9487 3.9487 0 0 1 4.5422 1.765 3.9483 3.9483 0 0 1-1.3963 5.0772L7.4363 8.5235zm4.8456-1.55l1.3744-2.4048a3.9483 3.9483 0 0 1 4.8081-.7512 3.9483 3.9483 0 0 1 1.9213 .5013L18.7427 5.5847l-1.6427 .9234L13.6527 4.5668zm1.1444 6.474l1.3744 2.4048a3.9483 3.9483 0 0 1 1.3963 5.0772 3.9487 3.9487 0 0 1-4.5422 1.765l-.0001-3.2505-1.6427-.9234 1.3744-2.4048zm-1.1444 1.55L8.5833 13.3995l1.6427-.9234 .0001 3.2505a3.9487 3.9487 0 0 1-4.5422-1.765 3.9483 3.9483 0 0 1 1.3963-5.0772l3.4143 1.9221zM10.3547 12l1.6453-3.003L13.6453 12L12 15.003 10.3547 12z"/>
+                </svg>
             </div>
+            <button class="text-white/60 hover:text-white transition-colors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="9" y1="3" x2="9" y2="21"/>
+                </svg>
+            </button>
+        </div>
 
-            <nav style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
-                <div class="nav-item active" onclick="newChat()">
-                    <span class="nav-icon">⊕</span>
-                    New chat
+        <nav class="space-y-1">
+            <button class="sidebar-item active" onclick="setView('main')">
+                <div class="flex items-center gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                    <span class="text-sm font-medium">New chat</span>
                 </div>
-                <div class="nav-item">
-                    <span class="nav-icon">🔍</span>
-                    Search chats
+            </button>
+            <button class="sidebar-item">
+                <div class="flex items-center gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <span class="text-sm font-medium">Search chats</span>
                 </div>
-                <div class="nav-item">
-                    <span class="nav-icon">▦</span>
-                    Projects
+            </button>
+            <button class="sidebar-item">
+                <div class="flex items-center gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span class="text-sm font-medium">Projects</span>
                 </div>
-                <div class="nav-item" style="color: #6b6b6b;">
-                    <span class="nav-icon">🧭</span>
-                    Codex
-                </div>
-                <div class="nav-item" style="color: #6b6b6b;">
-                    <span class="nav-icon">⋯</span>
-                    More
-                </div>
-
-                <div class="recents-title">Recents</div>
-                <div id="recentChats" style="display: flex; flex-direction: column; gap: 4px;">
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">M</div>
-                    <div>
-                        <div class="user-name">Majhoul Discord</div>
-                        <div class="user-status">Personal account</div>
+            </button>
+            <button class="sidebar-item" onclick="setView('codex')">
+                <div class="flex items-center justify-between w-full">
+                    <div class="flex items-center gap-3">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                        <span class="text-sm font-medium">Codex</span>
                     </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/20">
+                        <line x1="7" y1="17" x2="17" y2="7"/>
+                        <polyline points="7 7 17 7 17 17"/>
+                    </svg>
                 </div>
-                <button class="manage-btn">
-                    <span>⚙</span>
-                    Manage account
+            </button>
+            <button class="sidebar-item">
+                <div class="flex items-center gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="1"/>
+                        <circle cx="19" cy="12" r="1"/>
+                        <circle cx="5" cy="12" r="1"/>
+                    </svg>
+                    <span class="text-sm font-medium">More</span>
+                </div>
+            </button>
+        </nav>
+
+        <div class="mt-6 flex-1 flex flex-col overflow-hidden">
+            <div class="px-3 flex items-center justify-between cursor-pointer mb-3">
+                <h2 class="text-xs font-bold text-white">Recents</h2>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/20 -rotate-90">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </div>
+            <div class="flex-1 overflow-y-auto space-y-1">
+                <button class="recent-chat">AEGIS Upgrade Blueprint</button>
+                <button class="recent-chat">Building Humanized AI Agent</button>
+                <button class="recent-chat">Game Testing Workflow</button>
+                <button class="recent-chat">Running Minecraft Server Options</button>
+                <button class="recent-chat">Snowball 5x5 Fill Command</button>
+                <button class="recent-chat">Cheap Laptop for Emulators</button>
+                <button class="recent-chat">Minecraft Launcher Name Ideas</button>
+            </div>
+        </div>
+
+        <div class="mt-auto pt-4 border-t border-white/5">
+            <div class="flex items-center gap-3 px-3 py-3 mb-2 cursor-pointer hover:bg-[#1a1a1a] rounded-xl transition-colors">
+                <div class="w-6 h-6 rounded-full bg-pink-500 flex items-center justify-center text-[10px] font-bold text-white italic shadow-lg">
+                    US
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="text-sm font-semibold text-white leading-tight truncate">Majhoul Discord</span>
+                    <span class="text-[11px] text-white/40 truncate">Personal account</span>
+                </div>
+            </div>
+            <button class="claim-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/60">
+                    <polyline points="20 12 20 22 4 22 4 12"/>
+                    <rect x="2" y="7" width="20" height="5"/>
+                    <line x1="12" y1="22" x2="12" y2="7"/>
+                    <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                    <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+                </svg>
+                Claim offer
+            </button>
+        </div>
+    </aside>
+
+    <main id="mainContent" class="main-content flex-1 relative flex flex-col overflow-hidden">
+        <header id="topHeader" class="flex items-center justify-between p-4 px-6 z-10">
+            <div class="relative">
+                <button onclick="toggleModelMenu()" class="flex items-center gap-1 cursor-pointer hover:bg-[#2f2f2f] px-2 py-1.5 rounded-lg transition-colors">
+                    <span id="modelName" class="font-semibold text-lg text-white">ChatGPT</span>
+                    <svg id="modelChevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/40 transition-transform duration-200">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+
+                <div id="modelMenu" class="hidden fixed inset-0 z-40" onclick="toggleModelMenu()"></div>
+                <div id="modelDropdown" class="hidden absolute top-full left-0 mt-2 w-[340px] model-dropdown z-50 p-2 slide-up">
+                    <button class="model-option flex items-start justify-between">
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-6 h-6 flex items-center justify-center text-white p-1 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium text-[14.5px]">ChatGPT Plus</div>
+                                <div class="text-white/40 text-[12.5px]">Our smartest model & more</div>
+                            </div>
+                        </div>
+                        <div class="mt-0.5 px-3 py-1 rounded-full border border-white/10 text-[11px] font-medium text-white hover:bg-white/5 transition-colors">
+                            Try for free
+                        </div>
+                    </button>
+
+                    <button class="model-option active flex items-start justify-between">
+                        <div class="flex gap-3">
+                            <div class="mt-0.5 w-6 h-6 flex items-center justify-center text-white bg-black rounded-full border border-white/10 p-1">
+                                <svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full">
+                                    <path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5153-4.9066 6.0462 6.0462 0 0 0-3.947-3.1298 6.0917 6.0917 0 0 0-5.281 1.0651 6.0917 6.0917 0 0 0-4.3015-1.7825 6.0463 6.0463 0 0 0-5.32 3.321 6.0917 6.0917 0 0 0-.5153 5.4851 6.0463 6.0463 0 0 0-1.2587 5.617 6.0917 6.0917 0 0 0 3.947 3.1298 6.0917 6.0917 0 0 0 5.281-1.0651 6.0917 6.0917 0 0 0 4.3015 1.7825 6.0463 6.0463 0 0 0 5.32-3.321 6.0917 6.0917 0 0 0 .5153-5.4851 6.0463 6.0463 0 0 0 1.2587-5.617zm-10.2819 8.7885a3.944 3.944 0 0 1-1.9213-.5013L12 16.9205l1.6427-.9234 3.4473 1.9413a3.9483 3.9483 0 0 1-4.8081.7512zm-4.7081-3.6121l-3.4143-1.9221a3.9483 3.9483 0 0 1-1.3963-5.0772 3.9487 3.9487 0 0 1 4.5422-1.765l.0001 3.2505 1.6427 .9234-1.3744-2.4096zm1.1444-6.474l1.3744 2.4048-1.6427-.9234-.0001-3.2505a3.9487 3.9487 0 0 1 4.5422 1.765 3.9483 3.9483 0 0 1-1.3963 5.0772L7.4363 8.5235zm4.8456-1.55l1.3744-2.4048a3.9483 3.9483 0 0 1 4.8081-.7512 3.9483 3.9483 0 0 1 1.9213 .5013L18.7427 5.5847l-1.6427 .9234L13.6527 4.5668zm1.1444 6.474l1.3744 2.4048a3.9483 3.9483 0 0 1 1.3963 5.0772 3.9487 3.9487 0 0 1-4.5422 1.765l-.0001-3.2505-1.6427-.9234 1.3744-2.4048zm-1.1444 1.55L8.5833 13.3995l1.6427-.9234 .0001 3.2505a3.9487 3.9487 0 0 1-4.5422-1.765 3.9483 3.9483 0 0 1 1.3963-5.0772l3.4143 1.9221zM10.3547 12l1.6453-3.003L13.6453 12L12 15.003 10.3547 12z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="text-white font-medium text-[14.5px]">ChatGPT</div>
+                                <div class="text-white/40 text-[12.5px]">Great for everyday tasks</div>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-white">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="absolute left-1/2 -translate-x-1/2">
+                <button class="free-offer-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/80">
+                        <polyline points="20 12 20 22 4 22 4 12"/>
+                        <rect x="2" y="7" width="20" height="5"/>
+                        <line x1="12" y1="22" x2="12" y2="7"/>
+                        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+                        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+                    </svg>
+                    <span class="text-[13.5px] font-medium text-[#ececec]">Free offer</span>
                 </button>
             </div>
-        </aside>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="model-selector">
-                    <span class="model-name">Aegis</span>
-                    <span style="color: #6b6b6b;">▼</span>
-                </div>
-                <div class="top-bar-icons">
-                    <span class="top-icon">👤+</span>
-                    <div class="refresh-btn" id="refreshBtn">
-                        <span id="statusIcon">⟳</span>
-                    </div>
-                </div>
-            </header>
+            <div class="flex items-center gap-2">
+                <button id="tempChatBtn" onclick="toggleTempChat()" class="p-2 text-white/60 hover:text-white transition-colors hover:bg-[#1a1a1a] rounded-lg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.429 3.19a.75.75 0 0 1 .452.966 8.508 8.508 0 0 0-.25 4.588.75.75 0 1 1-1.464-.326 10.008 10.008 0 0 1 .295-5.4.75.75 0 0 1 .967-.328Zm-7.05.513a.75.75 0 1 1-.758 1.3 6.963 6.963 0 0 0-2.484 2.115 6.983 6.983 0 0 0-1.127 6.002c-.085-.02-.17-.038-.255-.053l-1.018-.18a.75.75 0 0 0-.26 1.477l1.018.18c.28.1.538.25.76.442a6.974 6.974 0 0 0 3.328 3.518 6.98 6.98 0 0 0 6.643.003 6.968 6.968 0 0 0 3.33-3.52.75.75 0 0 1 1.34.668 8.468 8.468 0 0 1-4.048 4.279 8.48 8.48 0 0 1-8.075-.004 8.474 8.474 0 0 1-4.045-4.278.435.435 0 0 1-.22-.387 8.483 8.483 0 0 1 1.371-7.29 8.461 8.461 0 0 1 3.018-2.57ZM12.025 2.5a.75.75 0 0 1 .75.75V4a.75.75 0 1 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm8.514 6.06a.75.75 0 0 1-.418.995 8.91 8.91 0 0 0-1.745.923.75.75 0 0 1-.796-1.268 10.41 10.41 0 0 1 2.039-1.077.75.75 0 0 1 .92.427Z" fill="currentColor"/>
+                    </svg>
+                </button>
+                <button class="p-2 text-white/60 hover:text-white transition-colors hover:bg-[#1a1a1a] rounded-lg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                </button>
+                <button class="p-2 text-white/60 hover:text-white transition-colors hover:bg-[#1a1a1a] rounded-lg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </button>
+            </div>
+        </header>
 
-            <div class="chat-area" id="chatArea">
-                <div class="welcome-screen" id="welcomeScreen">
-                    <div class="aegis-logo">
-                        <span class="logo-shield">🛡</span>
-                    </div>
-                    <h1 class="welcome-title">What are you working on?</h1>
+        <div id="mainView" class="flex-1 overflow-y-auto px-6 flex flex-col items-center justify-center pb-8">
+            <div class="w-full max-w-2xl flex flex-col items-center flex-1 justify-center fade-in">
+                <h1 class="text-3xl md:text-4xl font-semibold tracking-tight text-white mb-2 text-center">
+                    Good to see you, Majhoul.
+                </h1>
+
+                <div class="w-full relative mb-10 mt-8">
+                    <button onclick="toggleAddMenu()" id="addMenuBtn" class="absolute left-5 top-1/2 -translate-y-1/2 transition-colors text-white/40 hover:text-white">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
                     
-                    <div class="cloudflare-note" id="cloudflareNote">
-                        <h2>🌐 Cloudflare Pages - UI Only</h2>
-                        <p>
-                            This is the beautiful Aegis UI! For full AI functionality, run it locally or host the backend.</p>
-                        <a href="https://github.com/majhouldiscord2-debug/Aegis" class="cloudflare-btn" target="_blank">
-                            📂 View on GitHub
-                        </a>
-                        <button class="cloudflare-btn" onclick="toggleNote()">
-                            ✕ Hide
+                    <div id="addMenuOverlay" class="hidden fixed inset-0 z-20" onclick="toggleAddMenu()"></div>
+                    <div id="addMenu" class="hidden absolute bottom-full left-0 mb-4 w-72 add-menu z-30 py-2.5 slide-up">
+                        <button class="add-menu-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                            </svg>
+                            <span>Add photos & files</span>
+                        </button>
+                        
+                        <div class="h-px bg-white/5 my-1 mx-4"></div>
+
+                        <button class="add-menu-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                            <span>Create image</span>
+                        </button>
+
+                        <button class="add-menu-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                <path d="M9 18l6-6-6-6"/>
+                            </svg>
+                            <span>Thinking</span>
+                        </button>
+
+                        <button class="add-menu-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M2 12h.01M22 12h.01M12 2v.01M12 22v.01M17 12a5 5 0 0 1-5 5M12 7a5 5 0 0 1 5 5"/>
+                            </svg>
+                            <span>Deep research</span>
+                        </button>
+
+                        <button class="add-menu-item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            <span>Web search</span>
+                        </button>
+
+                        <div class="h-px bg-white/5 my-1 mx-4"></div>
+
+                        <button class="add-menu-item flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                    <circle cx="12" cy="12" r="1"/>
+                                    <circle cx="19" cy="12" r="1"/>
+                                    <circle cx="5" cy="12" r="1"/>
+                                </svg>
+                                <span>More</span>
+                            </div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/40">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+
+                        <button class="add-menu-item flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/70">
+                                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                <span>Projects</span>
+                            </div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/40">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <input
+                        id="mainInput"
+                        type="text"
+                        placeholder="Ask anything"
+                        class="w-full input-box py-4.5 pl-14 pr-28 text-[#ececec] focus:outline-none focus:ring-1 focus:ring-white/10 transition-all text-lg"
+                    />
+                    <div class="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-3">
+                        <button class="p-1.5 text-white/40 hover:text-white transition-colors">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                <line x1="12" y1="19" x2="12" y2="23"/>
+                                <line x1="8" y1="23" x2="16" y2="23"/>
+                            </svg>
+                        </button>
+                        <button class="p-1.5 bg-[#ececec] rounded-full text-black hover:bg-white transition-colors">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 3v18l15-9L5 3z"/>
+                            </svg>
                         </button>
                     </div>
                 </div>
 
-                <div class="messages-container hidden" id="messagesContainer">
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/80">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        Create an image
+                    </button>
+                    <button class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/80">
+                            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                            <path d="M2 2l7.586 7.586"/>
+                            <circle cx="11" cy="11" r="2"/>
+                        </svg>
+                        Write or edit
+                    </button>
+                    <button class="quick-action-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-white/80">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                        Look something up
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <div class="input-area" id="inputContainer">
-                <div class="mode-toggle">
-                    <button class="mode-btn active" data-mode="think">Think Mode</button>
-                    <button class="mode-btn" data-mode="goal">Goal Mode</button>
+        <div id="codexView" class="hidden flex-1 overflow-y-auto px-6 py-12">
+            <div class="w-full max-w-5xl mx-auto">
+                <div class="mb-12 text-center md:text-left">
+                    <h1 class="text-5xl font-semibold mb-4 text-white tracking-tight">Codex Dashboard</h1>
+                    <p class="text-white/40 text-lg">Explore and manage your core systems and repositories.</p>
                 </div>
-                <div class="input-box">
-                    <button class="input-action-btn" id="attachBtn">+</button>
-                    <input type="text" placeholder="Ask anything" class="flex-1 bg-transparent border-none outline-none text-lg px-2 py-3" id="messageInput">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <button class="input-action-btn" id="modeToggle" title="Toggle Think/Goal Mode">🧠</button>
-                        <button class="input-action-btn">🎤</button>
-                        <button class="send-btn" id="sendBtn">↑</button>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-[#212121] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/20 transition-all">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-orange-500/20 text-orange-500">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+                                <rect x="9" y="9" width="6" height="6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-medium">Aegis Core</h3>
+                            <p class="text-white/40 text-xs mt-1 leading-relaxed">Security & Identity protocols for AI operations.</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#212121] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/20 transition-all">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-500/20 text-blue-500">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-medium">Forsaken Lore</h3>
+                            <p class="text-white/40 text-xs mt-1 leading-relaxed">Historical archives and knowledge base documentation.</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#212121] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 cursor-pointer hover:border-white/20 transition-all">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-emerald-500/20 text-emerald-500">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/>
+                                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                                <line x1="6" y1="18" x2="6.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-medium">MC Server Node</h3>
+                            <p class="text-white/40 text-xs mt-1 leading-relaxed">Live deployment monitor for Minecraft infrastructure.</p>
+                        </div>
                     </div>
                 </div>
-                <p class="disclaimer">Aegis can make mistakes. Consider checking important information.</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="tempChatModal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+        <div class="w-full max-w-[480px] temp-chat-modal p-6 md:p-8 slide-up">
+            <h2 class="text-xl md:text-[22px] font-semibold text-white mb-8 tracking-tight">Temporary Chat</h2>
+            
+            <div class="space-y-8 mb-10">
+                <div class="flex gap-4">
+                    <div class="mt-1 w-6 h-6 flex items-center justify-center text-white/80">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M15.429 3.19a.75.75 0 0 1 .452.966 8.508 8.508 0 0 0-.25 4.588.75.75 0 1 1-1.464-.326 10.008 10.008 0 0 1 .295-5.4.75.75 0 0 1 .967-.328Zm-7.05.513a.75.75 0 1 1-.758 1.3 6.963 6.963 0 0 0-2.484 2.115 6.983 6.983 0 0 0-1.127 6.002c-.085-.02-.17-.038-.255-.053l-1.018-.18a.75.75 0 0 0-.26 1.477l1.018.18c.28.1.538.25.76.442a6.974 6.974 0 0 0 3.328 3.518 6.98 6.98 0 0 0 6.643.003 6.968 6.968 0 0 0 3.33-3.52.75.75 0 0 1 1.34.668 8.468 8.468 0 0 1-4.048 4.279 8.48 8.48 0 0 1-8.075-.004 8.474 8.474 0 0 1-4.045-4.278.435.435 0 0 1-.22-.387 8.483 8.483 0 0 1 1.371-7.29 8.461 8.461 0 0 1 3.018-2.57ZM12.025 2.5a.75.75 0 0 1 .75.75V4a.75.75 0 1 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm8.514 6.06a.75.75 0 0 1-.418.995 8.91 8.91 0 0 0-1.745.923.75.75 0 0 1-.796-1.268 10.41 10.41 0 0 1 2.039-1.077.75.75 0 0 1 .92.427Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-[17px] font-semibold text-white leading-tight mb-2">Not in history</h3>
+                        <p class="text-[14.5px] text-[#b4b4b4] leading-relaxed">
+                            Temporary chats won't appear in your history. For safety purposes, we may keep a copy of your chat for up to 30 days.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="mt-1 w-6 h-6 flex items-center justify-center text-white/80">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14"/>
+                            <path d="M12 5v14"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-[17px] font-semibold text-white leading-tight mb-2">No model training</h3>
+                        <p class="text-[14.5px] text-[#b4b4b4] leading-relaxed">
+                            Temporary chats won't be used to improve our models.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="mt-1 w-6 h-6 flex items-center justify-center text-white/80">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-[17px] font-semibold text-white leading-tight mb-2">Memory off</h3>
+                        <p class="text-[14.5px] text-[#b4b4b4] leading-relaxed">
+                            While in a temporary chat, ChatGPT won't use or update its memory. Custom instructions will still be followed if you have them enabled.
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="sparkle">✨</div>
-        </main>
-    </div>
-
-    <div class="status-indicator" id="statusIndicator">
-        <div class="status-dot"></div>
-        <span id="statusText">Demo Mode</span>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeTempChatModal()" class="px-6 py-2.5 bg-white text-black rounded-full font-semibold text-[15px] hover:bg-[#ececec] transition-colors">
+                    Continue
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let currentChatId = null;
-        let currentMode = 'think';
-        let isProcessing = false;
-        let chatHistory = JSON.parse(localStorage.getItem('aegisChatHistory') || '[]');
+        let currentView = 'main';
+        let isTemporaryChat = false;
+        let showModelMenu = false;
+        let showAddMenu = false;
 
-        chatHistory.forEach(chat => {
-            if (!chat.id) chat.id = Date.now().toString();
-            if (!chat.messages) chat.messages = [];
-            if (!chat.date) chat.date = new Date().toISOString();
-        });
-
-        function saveChatHistory() {
-            localStorage.setItem('aegisChatHistory', JSON.stringify(chatHistory));
-        }
-
-        function toggleNote() {
-            document.getElementById('cloudflareNote').classList.toggle('hidden');
-        }
-
-        function renderRecentChats() {
-            const container = document.getElementById('recentChats');
-            container.innerHTML = '';
-            
-            const sortedChats = [...chatHistory].sort((a, b) => 
-                new Date(b.date) - new Date(a.date)
-            );
-
-            if (sortedChats.length === 0) {
-                container.innerHTML = '<div style="padding: 8px; font-size: 12px; color: #6b6b6b;">No conversations yet</div>';
-                return;
-            }
-
-            sortedChats.slice(0, 10).forEach(chat => {
-                const preview = chat.messages.length > 0 
-                    ? chat.messages[0].text.substring(0, 30) + (chat.messages[0].text.length > 30 ? '...' : '')
-                    : 'New chat';
-                
-                const div = document.createElement('div');
-                div.className = 'recent-chat-item';
-                if (chat.id === currentChatId) {
-                    div.className += ' active';
-                }
-                div.innerHTML = `
-                    <span>💬</span>
-                    <span class="recent-preview">${escapeHtml(preview)}</span>
-                    <button class="delete-btn" data-id="${chat.id}">🗑</button>
-                `;
-                div.addEventListener('click', (e) => {
-                    if (!e.target.closest('.delete-btn')) {
-                        loadChat(chat.id);
-                    }
-                });
-                const deleteBtn = div.querySelector('.delete-btn');
-                deleteBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    deleteChat(chat.id);
-                });
-                container.appendChild(div);
+        function setView(view) {
+            currentView = view;
+            document.getElementById('mainView').classList.toggle('hidden', view !== 'main');
+            document.getElementById('codexView').classList.toggle('hidden', view !== 'codex');
+            document.querySelectorAll('.sidebar-item').forEach((item, i) => {
+                item.classList.toggle('active', (view === 'main' && i === 0) || (view === 'codex' && i === 3));
             });
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function toggleModelMenu() {
+            showModelMenu = !showModelMenu;
+            document.getElementById('modelMenu').classList.toggle('hidden', !showModelMenu);
+            document.getElementById('modelDropdown').classList.toggle('hidden', !showModelMenu);
+            document.getElementById('modelChevron').style.transform = showModelMenu ? 'rotate(180deg)' : 'rotate(0deg)';
         }
 
-        function newChat() {
-            currentChatId = null;
-            document.getElementById('welcomeScreen').classList.remove('hidden');
-            document.getElementById('messagesContainer').classList.add('hidden');
-            document.getElementById('messagesContainer').innerHTML = '';
-            renderRecentChats();
+        function toggleAddMenu() {
+            showAddMenu = !showAddMenu;
+            document.getElementById('addMenuOverlay').classList.toggle('hidden', !showAddMenu);
+            document.getElementById('addMenu').classList.toggle('hidden', !showAddMenu);
+            document.getElementById('addMenuBtn').style.color = showAddMenu ? 'white' : 'rgba(255,255,255,0.4)';
         }
 
-        function loadChat(chatId) {
-            const chat = chatHistory.find(c => c.id === chatId);
-            if (!chat) return;
-
-            currentChatId = chatId;
-            document.getElementById('welcomeScreen').classList.add('hidden');
-            document.getElementById('messagesContainer').classList.remove('hidden');
-            document.getElementById('messagesContainer').innerHTML = '';
-
-            chat.messages.forEach(msg => {
-                addMessageToUI(msg.text, msg.isUser, msg.isTerminal, false);
-            });
-
-            renderRecentChats();
-            scrollToBottom();
-        }
-
-        function deleteChat(chatId) {
-            chatHistory = chatHistory.filter(c => c.id !== chatId);
-            saveChatHistory();
-            if (currentChatId === chatId) {
-                newChat();
-            }
-            renderRecentChats();
-        }
-
-        function addMessageToUI(text, isUser = false, isTerminal = false, animate = true) {
-            const container = document.getElementById('messagesContainer');
-            const welcome = document.getElementById('welcomeScreen');
-            
-            welcome.classList.add('hidden');
-            container.classList.remove('hidden');
-
-            const div = document.createElement('div');
-            div.className = `message ${isUser ? 'user' : ''}`;
-            
-            if (isUser) {
-                div.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-bubble">${escapeHtml(text)}</div>
-                    </div>
-                `;
+        function toggleTempChat() {
+            if (isTemporaryChat) {
+                isTemporaryChat = false;
+                updateTempChatUI();
             } else {
-                const avatar = `
-                    <div class="message-avatar">🛡</div>
-                `;
-                
-                if (isTerminal) {
-                    div.innerHTML = `
-                        ${avatar}
-                        <div class="message-content">
-                            <div class="message-role">Aegis</div>
-                            <div class="terminal-output">${escapeHtml(text)}</div>
-                        </div>
-                    `;
-                } else {
-                    div.innerHTML = `
-                        ${avatar}
-                        <div class="message-content">
-                            <div class="message-role">Aegis</div>
-                            <div class="message-bubble">${escapeHtml(text)}</div>
-                        </div>
-                    `;
+                document.getElementById('tempChatModal').classList.remove('hidden');
+            }
+        }
+
+        function closeTempChatModal() {
+            isTemporaryChat = true;
+            document.getElementById('tempChatModal').classList.add('hidden');
+            updateTempChatUI();
+        }
+
+        function updateTempChatUI() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const topHeader = document.getElementById('topHeader');
+            const modelName = document.getElementById('modelName');
+            const tempChatBtn = document.getElementById('tempChatBtn');
+            
+            sidebar.classList.toggle('temporary', isTemporaryChat);
+            mainContent.classList.toggle('temporary', isTemporaryChat);
+            topHeader.classList.toggle('temporary', isTemporaryChat);
+            
+            modelName.textContent = isTemporaryChat ? 'Temporary Chat' : 'ChatGPT';
+            
+            tempChatBtn.classList.toggle('text-white', isTemporaryChat);
+            tempChatBtn.classList.toggle('bg-white/10', isTemporaryChat);
+            tempChatBtn.classList.toggle('hover:bg-white/20', isTemporaryChat);
+            tempChatBtn.classList.toggle('text-white/60', !isTemporaryChat);
+            tempChatBtn.classList.toggle('hover:bg-[#1a1a1a]', !isTemporaryChat);
+
+            const welcomeTitle = document.querySelector('#mainView h1');
+            if (welcomeTitle) {
+                welcomeTitle.textContent = isTemporaryChat ? 'Temporary Chat' : 'Good to see you, Majhoul.';
+            }
+        }
+
+        document.getElementById('mainInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const value = e.target.value.trim();
+                if (value) {
+                    alert('Message sent: ' + value);
+                    e.target.value = '';
                 }
             }
-
-            container.appendChild(div);
-            scrollToBottom();
-        }
-
-        function addTypingIndicator() {
-            const container = document.getElementById('messagesContainer');
-            const div = document.createElement('div');
-            div.id = 'typingIndicator';
-            div.className = 'message';
-            div.innerHTML = `
-                <div class="message-avatar">🛡</div>
-                <div class="message-content">
-                    <div class="message-role">Aegis</div>
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                </div>
-            `;
-            container.appendChild(div);
-            scrollToBottom();
-        }
-
-        function removeTypingIndicator() {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) indicator.remove();
-        }
-
-        function scrollToBottom() {
-            const chatArea = document.getElementById('chatArea');
-            chatArea.scrollTop = chatArea.scrollHeight;
-        }
-
-        function showStatus(text, show = true) {
-            const indicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            statusText.textContent = text;
-            indicator.classList.toggle('hidden', !show);
-            indicator.classList.toggle('flex', show);
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const message = input.value.trim();
-            
-            if (!message || isProcessing) return;
-
-            input.value = '';
-            isProcessing = true;
-            document.getElementById('sendBtn').disabled = true;
-            document.getElementById('sendBtn').textContent = '⏳';
-            showStatus('Demo Mode...', true);
-
-            if (!currentChatId) {
-                currentChatId = Date.now().toString();
-                chatHistory.unshift({
-                    id: currentChatId,
-                    messages: [],
-                    date: new Date().toISOString()
-                });
-            }
-
-            const chat = chatHistory.find(c => c.id === currentChatId);
-            chat.messages.push({ text: message, isUser: true, isTerminal: false });
-            addMessageToUI(message, true, false, true);
-            addTypingIndicator();
-            saveChatHistory();
-            renderRecentChats();
-
-            setTimeout(() => {
-                removeTypingIndicator();
-                const demoResponse = `Demo Mode Active!\n\nThis UI is fully working and saves chats!\n\nTo use the real AI:\n1. Clone the repo and run locally!\n\nOr host the backend!\n\nThis UI is great!`;
-                chat.messages.push({ text: demoResponse, isUser: false, isTerminal: true });
-                addMessageToUI(demoResponse, false, true, true);
-                saveChatHistory();
-                isProcessing = false;
-                document.getElementById('sendBtn').disabled = false;
-                document.getElementById('sendBtn').textContent = '↑';
-                showStatus('Demo Mode', true);
-            }, 1500);
-        }
-
-        function toggleMode() {
-            currentMode = currentMode === 'think' ? 'goal' : 'think';
-            const icon = document.getElementById('modeToggle');
-            const buttons = document.querySelectorAll('.mode-btn');
-            buttons.forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.mode === currentMode);
-            });
-            icon.textContent = currentMode === 'goal' ? '🎯' : '🧠';
-            icon.title = currentMode === 'goal' ? 'Goal Mode' : 'Think Mode';
-        }
-
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendMessage();
-            }
         });
-
-        document.getElementById('sendBtn').addEventListener('click', sendMessage);
-        document.getElementById('modeToggle').addEventListener('click', toggleMode);
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentMode = btn.dataset.mode;
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const icon = document.getElementById('modeToggle');
-                icon.textContent = currentMode === 'goal' ? '🎯' : '🧠';
-            });
-        });
-
-        document.getElementById('toggleSidebar').addEventListener('click', () => {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        });
-
-        renderRecentChats();
-        showStatus('Demo Mode', true);
     </script>
 </body>
 </html>
