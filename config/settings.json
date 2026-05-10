@@ -1,0 +1,6 @@
+{
+    "model": "tinyllama",
+    "log_level": "INFO",
+    "reflection_cycle": 5,
+    "persistence_path": "brain_data/"
+}

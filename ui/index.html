@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aegis Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            background-color: #000000; 
+            color: #ececec; 
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+        }
+
+        .sidebar { 
+            background-color: #000000; 
+            width: 260px; 
+            height: 100vh; 
+            border-right: 1px solid #202020; 
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 0 8px;
+        }
+
+        .icon-btn {
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: #ececec;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+
+        .icon-btn:hover {
+            background-color: #202020;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #a5a5a5;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background-color: #202020;
+            color: #ececec;
+        }
+
+        .nav-item.active {
+            background-color: #202020;
+            color: #ececec;
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .recents-title {
+            padding: 24px 8px 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #6b6b6b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-footer {
+            border-top: 1px solid #202020;
+            padding-top: 8px;
+            margin-top: auto;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #db2777, #9333ea);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .user-status {
+            font-size: 12px;
+            color: #6b6b6b;
+        }
+
+        .manage-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #2f2f2f;
+            border: none;
+            border-radius: 12px;
+            color: #ececec;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .manage-btn:hover {
+            background-color: #3f3f3f;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+        }
+
+        .top-bar {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .model-selector {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .model-selector:hover {
+            background-color: #202020;
+        }
+
+        .model-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .top-bar-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #6b6b6b;
+        }
+
+        .top-icon {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .top-icon:hover {
+            color: #ececec;
+        }
+
+        .refresh-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #4b4b4b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .refresh-btn:hover {
+            background-color: #202020;
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 16px;
+        }
+
+        .aegis-logo {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #9333ea, #06b6d4);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            box-shadow: 0 0 40px rgba(147, 51, 234, 0.3);
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(147, 51, 234, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(147, 51, 234, 0.6); }
+        }
+
+        .logo-shield {
+            font-size: 48px;
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 500;
+            margin-bottom: 0;
+        }
+
+        .messages-container {
+            max-width: 896px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .message {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #9333ea, #06b6d4);
+        }
+
+        .message.user .message-avatar {
+            display: none;
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message.user .message-content {
+            flex: none;
+            max-width: 80%;
+        }
+
+        .message-role {
+            font-size: 12px;
+            color: #6b6b6b;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .message-bubble {
+            background-color: #202020;
+            border-radius: 16px;
+            border-top-right-radius: 4px;
+            padding: 12px 16px;
+            font-size: 14px;
+        }
+
+        .message.user .message-bubble {
+            border-radius: 16px;
+            border-top-right-radius: 4px;
+        }
+
+        .terminal-output {
+            background-color: #0a0a0a;
+            border: 1px solid #303030;
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            margin-top: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            color: #a5a5a5;
+        }
+
+        .input-area {
+            padding: 16px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px;
+            background-color: #202020;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            max-width: 896px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn:hover {
+            color: #ececec;
+        }
+
+        .mode-btn.active {
+            background-color: #303030;
+            color: #ececec;
+        }
+
+        .input-box {
+            background-color: #212121;
+            border-radius: 28px;
+            display: flex;
+            align-items: flex-end;
+            padding: 8px 16px;
+            max-width: 896px;
+            margin: 0 auto;
+            border: 1px solid #303030;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-action-btn {
+            padding: 8px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+
+        .input-action-btn:hover {
+            color: #ececec;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 12px 8px;
+            background: transparent;
+            border: none;
+            color: #ececec;
+            font-size: 18px;
+            outline: none;
+            resize: none;
+            max-height: 200px;
+            min-height: 24px;
+            font-family: inherit;
+        }
+
+        #messageInput::placeholder {
+            color: #8e8e8e;
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+
+        .send-btn:hover {
+            background-color: #e0e0e0;
+            transform: scale(1.05);
+        }
+
+        .send-btn:disabled {
+            background-color: #3a3a3a;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .disclaimer {
+            text-align: center;
+            font-size: 12px;
+            color: #6b6b6b;
+            margin-top: 12px;
+        }
+
+        .sparkle {
+            position: absolute;
+            bottom: 96px;
+            right: 24px;
+            opacity: 0.4;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .status-indicator {
+            position: fixed;
+            bottom: 80px;
+            right: 24px;
+            background-color: #1a1a1a;
+            border: 1px solid #303030;
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #22c55e;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding-top: 8px;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background-color: #6b6b6b;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .recent-chat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #a5a5a5;
+            transition: all 0.2s;
+        }
+
+        .recent-chat-item:hover {
+            background-color: #202020;
+            color: #ececec;
+        }
+
+        .recent-chat-item.active {
+            background-color: #202020;
+            color: #ececec;
+        }
+
+        .recent-preview {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-btn {
+            padding: 4px;
+            background: transparent;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 4px;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        .recent-chat-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background-color: #303030;
+        }
+    </style>
+</head>
+<body>
+    <div style="display: flex; height: 100vh;">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <button class="icon-btn" id="toggleSidebar">◀</button>
+                <button class="icon-btn" onclick="newChat()">✏</button>
+            </div>
+
+            <nav style="flex: 1; overflow-y: auto; display: flex; flex-direction: column;">
+                <div class="nav-item active" onclick="newChat()">
+                    <span class="nav-icon">⊕</span>
+                    New chat
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    Search chats
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">▦</span>
+                    Projects
+                </div>
+                <div class="nav-item" style="color: #6b6b6b;">
+                    <span class="nav-icon">🧭</span>
+                    Codex
+                </div>
+                <div class="nav-item" style="color: #6b6b6b;">
+                    <span class="nav-icon">⋯</span>
+                    More
+                </div>
+
+                <div class="recents-title">Recents</div>
+                <div id="recentChats" style="display: flex; flex-direction: column; gap: 4px;">
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">M</div>
+                    <div>
+                        <div class="user-name">Majhoul Discord</div>
+                        <div class="user-status">Personal account</div>
+                    </div>
+                </div>
+                <button class="manage-btn">
+                    <span>⚙</span>
+                    Manage account
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="model-selector">
+                    <span class="model-name">Aegis</span>
+                    <span style="color: #6b6b6b;">▼</span>
+                </div>
+                <div class="top-bar-icons">
+                    <span class="top-icon">👤+</span>
+                    <div class="refresh-btn" id="refreshBtn">
+                        <span id="statusIcon">⟳</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="chat-area" id="chatArea">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="aegis-logo">
+                        <span class="logo-shield">🛡</span>
+                    </div>
+                    <h1 class="welcome-title">What are you working on?</h1>
+                </div>
+
+                <div class="messages-container hidden" id="messagesContainer">
+                </div>
+            </div>
+
+            <div class="input-area" id="inputContainer">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="think">Think Mode</button>
+                    <button class="mode-btn" data-mode="goal">Goal Mode</button>
+                </div>
+                <div class="input-box">
+                    <button class="input-action-btn" id="attachBtn">+</button>
+                    <input type="text" placeholder="Ask anything" class="flex-1 bg-transparent border-none outline-none text-lg px-2 py-3" id="messageInput">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button class="input-action-btn" id="modeToggle" title="Toggle Think/Goal Mode">🧠</button>
+                        <button class="input-action-btn">🎤</button>
+                        <button class="send-btn" id="sendBtn">↑</button>
+                    </div>
+                </div>
+                <p class="disclaimer">Aegis can make mistakes. Consider checking important information.</p>
+            </div>
+
+            <div class="sparkle">✨</div>
+        </main>
+    </div>
+
+    <div class="status-indicator hidden" id="statusIndicator">
+        <div class="status-dot"></div>
+        <span id="statusText">Ready</span>
+    </div>
+
+    <script>
+        let currentChatId = null;
+        let currentMode = 'think';
+        let isProcessing = false;
+        let chatHistory = JSON.parse(localStorage.getItem('aegisChatHistory') || '[]');
+
+        chatHistory.forEach(chat => {
+            if (!chat.id) chat.id = Date.now().toString();
+            if (!chat.messages) chat.messages = [];
+            if (!chat.date) chat.date = new Date().toISOString();
+        });
+
+        function saveChatHistory() {
+            localStorage.setItem('aegisChatHistory', JSON.stringify(chatHistory));
+        }
+
+        function renderRecentChats() {
+            const container = document.getElementById('recentChats');
+            container.innerHTML = '';
+            
+            const sortedChats = [...chatHistory].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+
+            if (sortedChats.length === 0) {
+                container.innerHTML = '<div style="padding: 8px; font-size: 12px; color: #6b6b6b;">No conversations yet</div>';
+                return;
+            }
+
+            sortedChats.slice(0, 10).forEach(chat => {
+                const preview = chat.messages.length > 0 
+                    ? chat.messages[0].text.substring(0, 30) + (chat.messages[0].text.length > 30 ? '...' : '')
+                    : 'New chat';
+                
+                const div = document.createElement('div');
+                div.className = 'recent-chat-item';
+                if (chat.id === currentChatId) {
+                    div.className += ' active';
+                }
+                div.innerHTML = `
+                    <span>💬</span>
+                    <span class="recent-preview">${escapeHtml(preview)}</span>
+                    <button class="delete-btn" data-id="${chat.id}">🗑</button>
+                `;
+                div.addEventListener('click', (e) => {
+                    if (!e.target.closest('.delete-btn')) {
+                        loadChat(chat.id);
+                    }
+                });
+                const deleteBtn = div.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteChat(chat.id);
+                });
+                container.appendChild(div);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function newChat() {
+            currentChatId = null;
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            document.getElementById('messagesContainer').classList.add('hidden');
+            document.getElementById('messagesContainer').innerHTML = '';
+            renderRecentChats();
+        }
+
+        function loadChat(chatId) {
+            const chat = chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+
+            currentChatId = chatId;
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('messagesContainer').classList.remove('hidden');
+            document.getElementById('messagesContainer').innerHTML = '';
+
+            chat.messages.forEach(msg => {
+                addMessageToUI(msg.text, msg.isUser, msg.isTerminal, false);
+            });
+
+            renderRecentChats();
+            scrollToBottom();
+        }
+
+        function deleteChat(chatId) {
+            chatHistory = chatHistory.filter(c => c.id !== chatId);
+            saveChatHistory();
+            if (currentChatId === chatId) {
+                newChat();
+            }
+            renderRecentChats();
+        }
+
+        function addMessageToUI(text, isUser = false, isTerminal = false, animate = true) {
+            const container = document.getElementById('messagesContainer');
+            const welcome = document.getElementById('welcomeScreen');
+            
+            welcome.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            const div = document.createElement('div');
+            div.className = `message ${isUser ? 'user' : ''}`;
+            
+            if (isUser) {
+                div.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-bubble">${escapeHtml(text)}</div>
+                    </div>
+                `;
+            } else {
+                const avatar = `
+                    <div class="message-avatar">🛡</div>
+                `;
+                
+                if (isTerminal) {
+                    div.innerHTML = `
+                        ${avatar}
+                        <div class="message-content">
+                            <div class="message-role">Aegis</div>
+                            <div class="terminal-output">${escapeHtml(text)}</div>
+                        </div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        ${avatar}
+                        <div class="message-content">
+                            <div class="message-role">Aegis</div>
+                            <div class="message-bubble">${escapeHtml(text)}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            container.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addTypingIndicator() {
+            const container = document.getElementById('messagesContainer');
+            const div = document.createElement('div');
+            div.id = 'typingIndicator';
+            div.className = 'message';
+            div.innerHTML = `
+                <div class="message-avatar">🛡</div>
+                <div class="message-content">
+                    <div class="message-role">Aegis</div>
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) indicator.remove();
+        }
+
+        function scrollToBottom() {
+            const chatArea = document.getElementById('chatArea');
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function showStatus(text, show = true) {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            statusText.textContent = text;
+            indicator.classList.toggle('hidden', !show);
+            indicator.classList.toggle('flex', show);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+
+            input.value = '';
+            isProcessing = true;
+            document.getElementById('sendBtn').disabled = true;
+            document.getElementById('sendBtn').textContent = '⏳';
+            showStatus('Processing...', true);
+
+            if (!currentChatId) {
+                currentChatId = Date.now().toString();
+                chatHistory.unshift({
+                    id: currentChatId,
+                    messages: [],
+                    date: new Date().toISOString()
+                });
+            }
+
+            const chat = chatHistory.find(c => c.id === currentChatId);
+            chat.messages.push({ text: message, isUser: true, isTerminal: false });
+            addMessageToUI(message, true, false, true);
+            addTypingIndicator();
+            saveChatHistory();
+            renderRecentChats();
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, mode: currentMode })
+                });
+
+                const data = await response.json();
+                removeTypingIndicator();
+
+                if (data.success) {
+                    chat.messages.push({ text: data.output, isUser: false, isTerminal: true });
+                    addMessageToUI(data.output, false, true, true);
+                } else {
+                    chat.messages.push({ text: 'Error: ' + data.error, isUser: false, isTerminal: false });
+                    addMessageToUI('Error: ' + data.error, false, false, true);
+                }
+            } catch (e) {
+                removeTypingIndicator();
+                const errorMsg = 'Failed to connect to AEGIS backend.';
+                chat.messages.push({ text: errorMsg, isUser: false, isTerminal: false });
+                addMessageToUI(errorMsg, false, false, true);
+            }
+
+            saveChatHistory();
+            isProcessing = false;
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('sendBtn').textContent = '↑';
+            showStatus('Ready', false);
+        }
+
+        function toggleMode() {
+            currentMode = currentMode === 'think' ? 'goal' : 'think';
+            const icon = document.getElementById('modeToggle');
+            const buttons = document.querySelectorAll('.mode-btn');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === currentMode);
+            });
+            icon.textContent = currentMode === 'goal' ? '🎯' : '🧠';
+            icon.title = currentMode === 'goal' ? 'Goal Mode' : 'Think Mode';
+        }
+
+        async function fetchStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                const statusIcon = document.getElementById('statusIcon');
+                statusIcon.textContent = data.status === 'Initializing...' ? '⏳' : '✓';
+            } catch (e) {
+            }
+        }
+
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('modeToggle').addEventListener('click', toggleMode);
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentMode = btn.dataset.mode;
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const icon = document.getElementById('modeToggle');
+                icon.textContent = currentMode === 'goal' ? '🎯' : '🧠';
+            });
+        });
+
+        document.getElementById('toggleSidebar').addEventListener('click', () => {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('hidden');
+        });
+
+        renderRecentChats();
+        fetchStatus();
+        setInterval(fetchStatus, 5000);
+    </script>
+</body>
+</html>
